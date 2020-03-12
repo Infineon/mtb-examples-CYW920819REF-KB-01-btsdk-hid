@@ -38,6 +38,8 @@
  */
 
 #include "keyboard.h"
+#include "wiced_hal_mia.h"
+#include "wiced_hal_wdog.h"
 #include "wiced_bt_trace.h"
 #include "hidd_lib.h"
 
@@ -115,6 +117,10 @@ void application_start( void )
     wiced_hidd_start(hid_app_init, NULL, &wiced_bt_hid_cfg_settings, wiced_bt_hid_cfg_buf_pools);
     hci_control_init(HCI_CONTROL_RPT_CNT, hci_rpt_db);
 
+#if (SLEEP_ALLOWED == 3)
+    wiced_hidd_allowed_hidoff(TRUE);
+#endif
+
     WICED_BT_TRACE("\nSLEEP_ALLOWED=%d",SLEEP_ALLOWED);
     WICED_BT_TRACE("\nLED SUPPORT=%d", LED_SUPPORT);
 
@@ -141,5 +147,8 @@ void application_start( void )
     WICED_BT_TRACE("\nAUTO_RECONNECT");
 #endif
 
-    wiced_hidd_led_blink(KB_LED_BLUE, 5, 100);  // fast 5 blinks to indicate firmware is up and running
+    if (wiced_hal_mia_is_reset_reason_por())
+    {
+        wiced_hidd_led_blink(KB_LED_BLUE, 5, 100);  // fast 5 blinks to indicate firmware is up and running
+    }
 }

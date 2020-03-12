@@ -420,6 +420,8 @@ void dual_mode_kb_create(void)
 #endif
     kbapp_init();
 
+    kbapp_pollReportUserActivity();
+
     WICED_BT_TRACE("\nFree RAM bytes=%d bytes", wiced_memory_get_free_bytes());
 }
 
@@ -600,6 +602,10 @@ void kbapp_pollReportUserActivity(void)
 ////////////////////////////////////////////////////////////////////////////////
 uint8_t kbapp_pollActivityUser(void)
 {
+#if (SLEEP_ALLOWED == 3)
+    static uint8_t firstPoll=1;
+#endif
+
     // Poll the hardware for events
     wiced_hal_mia_pollHardware();
 
@@ -621,10 +627,24 @@ uint8_t kbapp_pollActivityUser(void)
     }
     else
     {
-        // For all other cases, return value indicating whether any event is pending or
-        return (wiced_hidd_event_queue_get_num_elements(&kbAppState->eventQueue) ? BTHIDLINK_ACTIVITY_REPORTABLE : BTHIDLINK_ACTIVITY_NONE) |
-                ((kbAppState->modKeysInStdRpt || kbAppState->keysInStdRpt || kbAppState->keysInBitRpt || kbAppState->slpRpt.sleepVal)?
-                BTHIDLINK_ACTIVITY_NON_REPORTABLE : BTHIDLINK_ACTIVITY_NONE);
+        uint8_t status = wiced_hidd_event_queue_get_num_elements(&kbAppState->eventQueue) || kbAppState->modKeysInStdRpt || kbAppState->keysInStdRpt || kbAppState->keysInBitRpt || kbAppState->slpRpt.sleepVal ?
+                        BTHIDLINK_ACTIVITY_REPORTABLE : BTHIDLINK_ACTIVITY_NONE;
+#if (SLEEP_ALLOWED == 3)
+        if (firstPoll)
+        {
+            firstPoll = 0;
+            // if this is first poll waking up from HIDOFF, we want to reconnect
+            // This is a work around for not able detect the first key done waking up from HIDOFF. The detected key
+            // is support initite a connection and send the key report, but since there is no key, at least we work around
+            // to make connection.
+            if (wiced_hidd_is_paired() && !wiced_hal_mia_is_reset_reason_por() && !wiced_hidd_link_is_connected())
+            {
+                WICED_BT_TRACE("\nHIDOFF wake up reconnect");
+                status = BTHIDLINK_ACTIVITY_REPORTABLE;
+            }
+        }
+#endif
+        return status;
     }
 
 }
@@ -1053,6 +1073,7 @@ void kbapp_procEvtKey(void)
                 else if (keyCode == END_OF_SCAN_CYCLE)
                 {
                     kbapp_txModifiedKeyReports();
+                    wiced_hidd_activity_detected();
                 }
                 else
                 {
@@ -1842,6 +1863,7 @@ void kbapp_leStateChangeNotification(uint32_t newState)
     }
     else
     {
+        kb_LED_off(KB_LED_CAPS);
         kb_LED_off(KB_LED_LE_LINK);
         if(newState == BLEHIDLINK_DISCONNECTED)
         {
@@ -1932,6 +1954,7 @@ void kbapp_btStateChangeNotification(uint32_t newState)
     {
         if (newState == BTHIDLINK_DISCONNECTED)
         {
+            kb_LED_off(KB_LED_CAPS);
             kb_LED_off(KB_LED_ERBDR_LINK);
             if (!blinkingStartup)
             {

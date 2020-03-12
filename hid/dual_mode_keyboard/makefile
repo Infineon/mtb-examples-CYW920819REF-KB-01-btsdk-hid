@@ -114,6 +114,12 @@ CY_APP_PATCH_LIBS += wiced_hidd_lib.a
 #
 # defaults if not overridden on the command line:
 
+#ifeq ($(eval), 1)
+# TARGET=CYW920819EVB-02
+# SUPPORTED_TARGETS += CYW920819EVB-02
+# TARGET_DEVICE_MAP += CYW920819EVB-02/20819A1
+#endif
+
 ifeq ($(TARGET), CYW920819REF-KB-01)
  TESTING_USING_HCI_DEFAULT=0
 else
@@ -128,7 +134,8 @@ AUTO_RECONNECT_DEFAULT=0
 # SLEEP_ALLOWED
 #  SLEEP_ALLOWED_DEFAULT=0  Disable sleep function
 #  SLEEP_ALLOWED_DEFAULT=1  Allow sleep without shutdown
-#  SLEEP_ALLOWED_DEFAULT=2  Allow sleep with shutdown
+#  SLEEP_ALLOWED_DEFAULT=2  Allow sleep with ePDS
+#  SLEEP_ALLOWED_DEFAULT=3  Allow sleep with HIDOFF
 SLEEP_ALLOWED_DEFAULT=2
 # LED
 #  LED_SUPPORT_DEFAULT=0  Disable LED functions (Good for power consumption measurement)
@@ -158,12 +165,20 @@ CY_APP_DEFINES = \
   -DSLEEP_ALLOWED=$(SLEEP_ALLOWED) \
   -DLED_SUPPORT=$(LED)
 
+ifneq ($(filter CYW920819EVB-02 CYW920820EVB-02 CYW920819REF-KB-01,$(TARGET)),)
+ CY_APP_DEFINES += -DSUPPORT_EPDS
+endif
+
 ifeq ($(TARGET), CYW920819REF-KB-01)
  CY_APP_DEFINES += -DKEYBOARD_PLATFORM
 endif
 
-ifeq ($(TESTING_USING_HCI),1)
- CY_APP_DEFINES += -DTESTING_USING_HCI
+ifeq ($(hci_dump), 1)
+ CY_APP_DEFINES += -DHCI_TRACES_ENABLED
+else
+ ifeq ($(TESTING_USING_HCI),1)
+  CY_APP_DEFINES += -DTESTING_USING_HCI
+ endif
 endif
 
 ifeq ($(OTA_FW_UPGRADE),1)
@@ -207,6 +222,8 @@ CY_APP_PATH=.
 
 # Path (absolute or relative) to the bt-sdk folder (at repo root)
 CY_SHARED_PATH=$(CY_APP_PATH)/../../../wiced_btsdk
+# absolute path to the root of the BTSDK
+CY_SHARED_PATH_ABS=$(CURDIR)/../../../wiced_btsdk
 
 # Path (absolute or relative) to the base library
 CY_BASELIB_PATH=$(CY_SHARED_PATH)/dev-kit/baselib/$(CY_TARGET_DEVICE)
