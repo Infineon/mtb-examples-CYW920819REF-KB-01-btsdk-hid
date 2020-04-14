@@ -303,7 +303,7 @@ const uint8_t blehid_db_data[]=
 {
     // Declare gatt service
     PRIMARY_SERVICE_UUID16
-        ( HANDLE_BLEKB_GATT_SERVICE, UUID_SERVCLASS_GATT_SERVER ),
+    ( HANDLE_BLEKB_GATT_SERVICE, UUID_SERVCLASS_GATT_SERVER ),
 
 #if INCLUDE_GATT_SERVICE_CHANGED
     CHARACTERISTIC_UUID16
@@ -319,100 +319,99 @@ const uint8_t blehid_db_data[]=
     // Declare GAP service. Device Name and Appearance are mandatory
     // characteristics of GAP service
     PRIMARY_SERVICE_UUID16
-        ( HANDLE_BLEKB_GAP_SERVICE, UUID_SERVCLASS_GAP_SERVER ),
+    ( HANDLE_BLEKB_GAP_SERVICE, UUID_SERVCLASS_GAP_SERVER ),
 
     // Declare mandatory GAP service characteristic: Dev Name
     CHARACTERISTIC_UUID16
-        (
-          HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_NAME,
-          HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_NAME_VAL,
-          GATT_UUID_GAP_DEVICE_NAME,
-          LEGATTDB_CHAR_PROP_READ,
-          LEGATTDB_PERM_READABLE
-        ),
+    (
+        HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_NAME,
+        HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_NAME_VAL,
+        GATT_UUID_GAP_DEVICE_NAME,
+        LEGATTDB_CHAR_PROP_READ,
+        LEGATTDB_PERM_READABLE
+    ),
 
     // Declare mandatory GAP service characteristic: Appearance
     CHARACTERISTIC_UUID16
-       (
-         HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_APPEARANCE,
-         HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_APPEARANCE_VAL,
-         GATT_UUID_GAP_ICON,
-         LEGATTDB_CHAR_PROP_READ,
-         LEGATTDB_PERM_READABLE
-       ),
+    (
+        HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_APPEARANCE,
+        HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_APPEARANCE_VAL,
+        GATT_UUID_GAP_ICON,
+        LEGATTDB_CHAR_PROP_READ,
+        LEGATTDB_PERM_READABLE
+    ),
 
     // Declare GAP service characteristic: Peripheral Prefered Connection Parameter
     CHARACTERISTIC_UUID16
-       (
-         HANDLE_BLEKB_GAP_SERVICE_CHAR_PERI_PREFER_CONNPARAM,
-         HANDLE_BLEKB_GAP_SERVICE_CHAR_PERI_PREFER_CONNPARAM_VAL,
-         GATT_UUID_GAP_PREF_CONN_PARAM,
-         LEGATTDB_CHAR_PROP_READ,
-         LEGATTDB_PERM_READABLE
-       ),
+    (
+        HANDLE_BLEKB_GAP_SERVICE_CHAR_PERI_PREFER_CONNPARAM,
+        HANDLE_BLEKB_GAP_SERVICE_CHAR_PERI_PREFER_CONNPARAM_VAL,
+        GATT_UUID_GAP_PREF_CONN_PARAM,
+        LEGATTDB_CHAR_PROP_READ,
+        LEGATTDB_PERM_READABLE
+    ),
 
     // Declare Device info service
     PRIMARY_SERVICE_UUID16
-        ( HANDLE_BLEKB_DEV_INFO_SERVICE, UUID_SERVCLASS_DEVICE_INFO ),
+    ( HANDLE_BLEKB_DEV_INFO_SERVICE, UUID_SERVCLASS_DEVICE_INFO ),
 
     // Handle 0x29: characteristic PnP ID, handle 0x2A characteristic value
     CHARACTERISTIC_UUID16
-        (
-          HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_PNP_ID,
-          HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_PNP_ID_VAL,
-          GATT_UUID_PNP_ID,
-          LEGATTDB_CHAR_PROP_READ,
-          LEGATTDB_PERM_READABLE
-        ),
+    (
+        HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_PNP_ID,
+        HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_PNP_ID_VAL,
+        GATT_UUID_PNP_ID,
+        LEGATTDB_CHAR_PROP_READ,
+        LEGATTDB_PERM_READABLE
+    ),
 
     // Handle 0x2B: characteristic Manufacturer Name, handle 0x2C characteristic value
     CHARACTERISTIC_UUID16
-        (
-          HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_MFR_NAME,
-          HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_MFR_NAME_VAL,
-          GATT_UUID_MANU_NAME,
-          LEGATTDB_CHAR_PROP_READ,
-          LEGATTDB_PERM_READABLE
-        ),
+    (
+        HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_MFR_NAME,
+        HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_MFR_NAME_VAL,
+        GATT_UUID_MANU_NAME,
+        LEGATTDB_CHAR_PROP_READ,
+        LEGATTDB_PERM_READABLE
+    ),
 
-   // Declare Battery service
-   PRIMARY_SERVICE_UUID16
-        ( HANDLE_BLEKB_BATTERY_SERVICE, UUID_SERVCLASS_BATTERY),
+    // Declare Battery service
+    PRIMARY_SERVICE_UUID16
+    ( HANDLE_BLEKB_BATTERY_SERVICE, UUID_SERVCLASS_BATTERY),
 
-   // Handle 0x31: characteristic Battery Level, handle 0x32 characteristic value
-   CHARACTERISTIC_UUID16
-        (
-          HANDLE_BLEKB_BATTERY_SERVICE_CHAR_LEVEL,       // attribute handle
-          HANDLE_BLEKB_BATTERY_SERVICE_CHAR_LEVEL_VAL, // attribute value handle
-          GATT_UUID_BATTERY_LEVEL,
-          LEGATTDB_CHAR_PROP_READ|LEGATTDB_CHAR_PROP_NOTIFY,
-          LEGATTDB_PERM_READABLE
-        ),
+    // Handle 0x31: characteristic Battery Level, handle 0x32 characteristic value
+    CHARACTERISTIC_UUID16
+    (
+        HANDLE_BLEKB_BATTERY_SERVICE_CHAR_LEVEL,       // attribute handle
+        HANDLE_BLEKB_BATTERY_SERVICE_CHAR_LEVEL_VAL, // attribute value handle
+        GATT_UUID_BATTERY_LEVEL,
+        LEGATTDB_CHAR_PROP_READ|LEGATTDB_CHAR_PROP_NOTIFY,
+        LEGATTDB_PERM_READABLE
+    ),
 
-   // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
+    // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
     // Value modified shall be retained during connection and across connection // for bonded devices
-   CHAR_DESCRIPTOR_UUID16_WRITABLE
+    CHAR_DESCRIPTOR_UUID16_WRITABLE
     (
         HANDLE_BLEKB_BATTERY_SERVICE_CHAR_CFG_DESCR,
         GATT_UUID_CHAR_CLIENT_CONFIG,
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x34: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x34: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_BATTERY_SERVICE_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
         LEGATTDB_PERM_READABLE
     ),
 
+    // Declare Scan Parameters service
+    PRIMARY_SERVICE_UUID16
+    ( HANDLE_BLEKB_SCAN_PARAM_SERVICE, UUID_SERVCLASS_SCAN_PARAM),
 
-   // Declare Scan Parameters service
-   PRIMARY_SERVICE_UUID16
-        ( HANDLE_BLEKB_SCAN_PARAM_SERVICE, UUID_SERVCLASS_SCAN_PARAM),
-
-   // Handle 0x41: characteristic Battery Level, handle 0x42 characteristic value
-   CHARACTERISTIC_UUID16_WRITABLE
+    // Handle 0x41: characteristic Battery Level, handle 0x42 characteristic value
+    CHARACTERISTIC_UUID16_WRITABLE
     (
         HANDLE_BLEKB_SCAN_PARAM_SERVICE_CHAR_SCAN_INT_WINDOW,
         HANDLE_BLEKB_SCAN_PARAM_SERVICE_CHAR_SCAN_INT_WINDOW_VAL,
@@ -421,10 +420,9 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_WRITE_CMD | LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Declare HID over LE
-   PRIMARY_SERVICE_UUID16
-        ( HANDLE_BLEKB_LE_HID_SERVICE, UUID_SERVCLASS_LE_HID),
-
+    // Declare HID over LE
+    PRIMARY_SERVICE_UUID16
+    ( HANDLE_BLEKB_LE_HID_SERVICE, UUID_SERVCLASS_LE_HID),
 
     // Include BSA SERVICE
     INCLUDE_SERVICE_UUID16
@@ -455,7 +453,6 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-
     // Handle 0x55: characteristic Boot Keyboard Input report, handle 0x56 characteristic value
     CHARACTERISTIC_UUID16
     (
@@ -466,16 +463,14 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-
-   // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
+    // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
     // Value modified shall be retained during connection and across connection // for bonded devices
-   CHAR_DESCRIPTOR_UUID16_WRITABLE
+    CHAR_DESCRIPTOR_UUID16_WRITABLE
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_BT_KB_INPUT_CHAR_CFG_DESCR,
         GATT_UUID_CHAR_CLIENT_CONFIG,
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
-
 
     // Handle 0x58: characteristic Boot Keyboard Output report, handle 0x59 characteristic value
     CHARACTERISTIC_UUID16_WRITABLE
@@ -497,16 +492,14 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-
-   // include Battery Service
-   // Handle 0x5C: external report reference
-   CHAR_DESCRIPTOR_UUID16
+    // include Battery Service
+    // Handle 0x5C: external report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_EXT_RPT_REF_DESCR,
         GATT_UUID_EXT_RPT_REF_DESCR,
         LEGATTDB_PERM_READABLE
     ),
-
 
     // STD Input report
     // Handle 0x5D: characteristic HID Report, handle 0x5E characteristic value
@@ -519,17 +512,17 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-   // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
+    // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
     // Value modified shall be retained during connection and across connection // for bonded devices
-   CHAR_DESCRIPTOR_UUID16_WRITABLE
+    CHAR_DESCRIPTOR_UUID16_WRITABLE
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_INPUT_CHAR_CFG_DESCR,
         GATT_UUID_CHAR_CLIENT_CONFIG,
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x60: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x60: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_INPUT_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
@@ -547,8 +540,8 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x63: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x63: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_OUTPUT_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
@@ -566,17 +559,17 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-   // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
+    // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
     // Value modified shall be retained during connection and across connection // for bonded devices
-   CHAR_DESCRIPTOR_UUID16_WRITABLE
+    CHAR_DESCRIPTOR_UUID16_WRITABLE
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_BITMAP_CHAR_CFG_DESCR,
         GATT_UUID_CHAR_CLIENT_CONFIG,
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x67: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x67: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_BITMAP_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
@@ -594,17 +587,17 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-   // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
+    // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
     // Value modified shall be retained during connection and across connection // for bonded devices
-   CHAR_DESCRIPTOR_UUID16_WRITABLE
+    CHAR_DESCRIPTOR_UUID16_WRITABLE
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SLEEP_CHAR_CFG_DESCR,
         GATT_UUID_CHAR_CLIENT_CONFIG,
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x6B: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x6B: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SLEEP_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
@@ -622,17 +615,17 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-   // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
+    // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
     // Value modified shall be retained during connection and across connection // for bonded devices
-   CHAR_DESCRIPTOR_UUID16_WRITABLE
+    CHAR_DESCRIPTOR_UUID16_WRITABLE
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_FUNC_LOCK_CHAR_CFG_DESCR,
         GATT_UUID_CHAR_CLIENT_CONFIG,
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x6F: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x6F: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_FUNC_LOCK_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
@@ -650,23 +643,22 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE
     ),
 
-   // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
+    // Declare client specific characteristic cfg desc. // Value of the descriptor can be modified by the client
     // Value modified shall be retained during connection and across connection // for bonded devices
-   CHAR_DESCRIPTOR_UUID16_WRITABLE
+    CHAR_DESCRIPTOR_UUID16_WRITABLE
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SCROLL_CHAR_CFG_DESCR,
         GATT_UUID_CHAR_CLIENT_CONFIG,
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_CMD|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x73: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x73: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SCROLL_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
         LEGATTDB_PERM_READABLE
     ),
-
 
     // Connection control feature
     // Handle 0x74: characteristic HID Report, handle 0x75 characteristic value
@@ -679,8 +671,8 @@ const uint8_t blehid_db_data[]=
         LEGATTDB_PERM_READABLE|LEGATTDB_PERM_WRITE_REQ
     ),
 
-   // Handle 0x76: report reference
-   CHAR_DESCRIPTOR_UUID16
+    // Handle 0x76: report reference
+    CHAR_DESCRIPTOR_UUID16
     (
         HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_CONNECTION_CTRL_RPT_REF_DESCR,
         GATT_UUID_RPT_REF_DESCR,
@@ -699,9 +691,15 @@ const uint8_t blehid_db_data[]=
     ),
 
 #ifdef OTA_FIRMWARE_UPGRADE
+ #ifdef OTA_SECURE_FIRMWARE_UPGRADE
+    // Handle 0xff00: Cypress vendor specific WICED Secure OTA Upgrade Service.
+    PRIMARY_SERVICE_UUID128
+    ( HANDLE_OTA_FW_UPGRADE_SERVICE, UUID_OTA_SEC_FW_UPGRADE_SERVICE ),
+ #else
     // Handle 0xff00: Cypress vendor specific WICED OTA Upgrade Service.
     PRIMARY_SERVICE_UUID128
-        ( HANDLE_OTA_FW_UPGRADE_SERVICE, UUID_OTA_FW_UPGRADE_SERVICE ),
+    ( HANDLE_OTA_FW_UPGRADE_SERVICE, UUID_OTA_FW_UPGRADE_SERVICE ),
+ #endif
 
     // Handles 0xff03: characteristic WS Control Point, handle 0xff04 characteristic value.
     CHARACTERISTIC_UUID128_WRITABLE
@@ -741,7 +739,7 @@ const uint16_t blehid_db_size = sizeof(blehid_db_data);
 
 /*****************************************************************************
  * This is the report map for HID Service
-  ****************************************************************************/
+ ****************************************************************************/
 const uint8_t blehid_rpt_map[] =
 {
             // STD_KB_REPORT_ID
@@ -907,7 +905,7 @@ const attribute_t blehid_gattAttributes[] =
 
     {
         HANDLE_BLEKB_GAP_SERVICE_CHAR_DEV_NAME_VAL,
-        sizeof(dev_local_name),
+        sizeof(dev_local_name)-1,
         dev_local_name  //fixed
     },
 
@@ -931,7 +929,7 @@ const attribute_t blehid_gattAttributes[] =
 
     {
         HANDLE_BLEKB_DEV_INFO_SERVICE_CHAR_MFR_NAME_VAL,
-        sizeof(dev_char_mfr_name_value),
+        sizeof(dev_char_mfr_name_value)-1,
         dev_char_mfr_name_value //fixed
     },
 
@@ -972,7 +970,7 @@ const attribute_t blehid_gattAttributes[] =
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_BT_KB_INPUT_CHAR_CFG_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_BT_KB_INPUT_CHAR_CFG_DESCR,
         2,
         &characteristic_client_configuration[0]  //bit mask: KBAPP_CLIENT_CONFIG_NOTIF_BOOT_RPT          (0x01)
     },
@@ -1002,13 +1000,13 @@ const attribute_t blehid_gattAttributes[] =
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_INPUT_CHAR_CFG_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_INPUT_CHAR_CFG_DESCR,
         2,
         &characteristic_client_configuration[1]  //bit mask: KBAPP_CLIENT_CONFIG_NOTIF_STD_RPT           (0x02)
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_INPUT_RPT_REF_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_INPUT_RPT_REF_DESCR,
         2,
         rpt_ref_std_key_input   //fixed
     },
@@ -1020,7 +1018,7 @@ const attribute_t blehid_gattAttributes[] =
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_OUTPUT_RPT_REF_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_STD_OUTPUT_RPT_REF_DESCR,
         2,
         rpt_ref_std_key_output  //fixed
     },
@@ -1050,13 +1048,13 @@ const attribute_t blehid_gattAttributes[] =
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SLEEP_CHAR_CFG_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SLEEP_CHAR_CFG_DESCR,
         2,
         &characteristic_client_configuration[3]  //bit mask: KBAPP_CLIENT_CONFIG_NOTIF_SLP_RPT           (0x08)
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SLEEP_RPT_REF_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SLEEP_RPT_REF_DESCR,
         2,
         rpt_ref_sleep   //fixed
     },
@@ -1068,13 +1066,13 @@ const attribute_t blehid_gattAttributes[] =
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_FUNC_LOCK_CHAR_CFG_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_FUNC_LOCK_CHAR_CFG_DESCR,
         2,
         &characteristic_client_configuration[4]  //bit mask: KBAPP_CLIENT_CONFIG_NOTIF_FUNC_LOCK_RPT     (0x10)
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_FUNC_LOCK_RPT_REF_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_FUNC_LOCK_RPT_REF_DESCR,
         2,
         rpt_ref_func_lock   //fixed
     },
@@ -1086,13 +1084,13 @@ const attribute_t blehid_gattAttributes[] =
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SCROLL_CHAR_CFG_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SCROLL_CHAR_CFG_DESCR,
         2,
         &characteristic_client_configuration[6]  //bit mask: KBAPP_CLIENT_CONFIG_NOTIF_SCROLL_RPT        (0x40)
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SCROLL_RPT_REF_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_SCROLL_RPT_REF_DESCR,
         2,
         rpt_ref_scroll  //fixed
     },
@@ -1104,7 +1102,7 @@ const attribute_t blehid_gattAttributes[] =
     },
 
     {
-       HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_CONNECTION_CTRL_RPT_REF_DESCR,
+        HANDLE_BLEKB_LE_HID_SERVICE_HID_RPT_CONNECTION_CTRL_RPT_REF_DESCR,
         2,
         rpt_ref_connection_ctrl //fixed
     },
@@ -1131,7 +1129,7 @@ KbAppConfig kbAppConfig =
     .numBitMappedKeys = BIT_MAPPED_MAX,
 
     // Sleep report ID
-   .sleepReportID =  SLEEP_REPORT_ID,
+    .sleepReportID = SLEEP_REPORT_ID,
 
     // Pin report ID
     .pinReportID = NOT_USED_REPORT_ID,
