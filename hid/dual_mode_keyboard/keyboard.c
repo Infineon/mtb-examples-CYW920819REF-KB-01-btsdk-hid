@@ -3036,12 +3036,3 @@ void kbapp_write_eir(void)
 
     return;
 }
-
-#ifdef OTA_FIRMWARE_UPGRADE
-wiced_bool_t wiced_ota_fw_upgrade_is_active(void)
-{
-    return (ota_fw_upgrade_initialized &&
-           (ota_fw_upgrade_state.state != OTA_STATE_IDLE) &&
-           (ota_fw_upgrade_state.state != OTA_STATE_ABORTED));
-}
-#endif /* OTA_FIRMWARE_UPGRADE */
