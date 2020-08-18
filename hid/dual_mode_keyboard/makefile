@@ -45,21 +45,26 @@ VERBOSE=
 
 # default target
 TARGET=CYW920819REF-KB-01
+#TARGET=CYW920819EVB-02
+#TARGET=CYW920820EVB-02
+#TARGET=CYW920735Q60EVB-01
 
 SUPPORTED_TARGETS = \
   CYW920819REF-KB-01 \
-#  CYW920819EVB-02 \
-#  CYW920820EVB-02
+  CYW920819EVB-02 \
+  CYW920820EVB-02 \
+  CYW920735Q60EVB-01 \
 
 TARGET_DEVICE_MAP = \
   CYW920819REF-KB-01/20819A1 \
-#  CYW920819EVB-02/20819A1 \
-#  CYW920820EVB-02/20820A1
+  CYW920819EVB-02/20819A1 \
+  CYW920820EVB-02/20820A1 \
+  CYW920735Q60EVB-01/20735B1 \
 
 CY_TARGET_DEVICE = $(patsubst $(TARGET)/%,%,$(filter $(TARGET)%,$(TARGET_DEVICE_MAP)))
 
 ifeq ($(filter $(TARGET),$(SUPPORTED_TARGETS)),)
- $(error TARGET $(TARGET) not supported for this code example)
+ $(error TARGET $(TARGET) not supported. Please use one of $(SUPPORTED_TARGETS))
 endif
 
 #
@@ -90,84 +95,128 @@ FEATURES=
 # Define basic library COMPONENTS
 #
 COMPONENTS +=bsp_design_modus
-COMPONENTS += hidd_lib
+COMPONENTS += hidd_lib2
 CY_APP_PATCH_LIBS += wiced_hidd_lib.a
 
-#
-# App features/defaults
-#
-# Note: TESTING_USING_HCI only enabled for testing via HCI UART using ClientControl tool.
-# It is only for the case that the WICED BOARD you get doesn't have any GPIO pins
-# exposed, you can't use any fly wire to connect to GPIOs to simulate key press
-# and key release to test out the application. ClientControl tool can help you
-# simulate key press and release by sending key report via HCI to the WICED BOARD
-#
-# Use OTA_FW_UPGRADE=1 to enable Over-the-air firmware upgrade functionality
-# Use OTA_SEC_FW_UPGRADE=1 in the make target to use secure OTA procedure.
-# See instructions in ota_firmware_upgrade.c file how to use secure upgrade.
-# Use ASSYMETRIC_SLAVE_LATENCY=1 if master won't accept slave connection parameter update
-# request.
-# Use AUTO_RECONNECT=1 to automatically reconnect when connection drops
-# Use LE_LOCAL_PRIVACY=1 to advertise with Resolvable Private Address (RPA)
-# Use SKIP_PARAM_UPDATE=1 to not request connection parameter update immediately when
-# received LE conn param update complete event with non-preferred values
-#
-# defaults if not overridden on the command line:
-
-#ifeq ($(eval), 1)
-# TARGET=CYW920819EVB-02
-# SUPPORTED_TARGETS += CYW920819EVB-02
-# TARGET_DEVICE_MAP += CYW920819EVB-02/20819A1
+#ifeq ($(TARGET), CYW920819EVB-02)
+# # use app specific design.modus
+# DISABLE_COMPONENTS+=bsp_design_modus
+# COMPONENTS+=CYW920819EVB-02_KB_design_modus
+# INCLUDES+=$(CY_APP_PATH)/COMPONENT_CYW920819EVB-02_RM_design_modus/GeneratedSource
 #endif
 
-ifeq ($(TARGET), CYW920819REF-KB-01)
- TESTING_USING_HCI_DEFAULT=0
-else
- TESTING_USING_HCI_DEFAULT=1
-endif
-OTA_FW_UPGRADE_DEFAULT=1
-OTA_SEC_FW_UPGRADE_DEFAULT=0
-ASSYMETRIC_SLAVE_LATENCY_DEFAULT=0
-LE_LOCAL_PRIVACY_DEFAULT=0
-SKIP_PARAM_UPDATE_DEFAULT=1
-AUTO_RECONNECT_DEFAULT=0
+#ifeq ($(TARGET), CYW920820EVB-02)
+# # use app specific design.modus
+# DISABLE_COMPONENTS+=bsp_design_modus
+# COMPONENTS+=CYW920820EVB-02_KB_design_modus
+# INCLUDES+=$(CY_APP_PATH)/COMPONENT_CYW920820EVB-02_KB_design_modus/GeneratedSource
+#endif
+
+#######################################################################################
+# App compile flag defaults
+#
+# All flags can be defined in command line. When it is not defined, the following default value is used.
+# Set to 1 to enable, 0 to disable.
+
+##########
+# Bluetooth capability flags
+# When both LE and BREDR are enabled together, the device will be in dual mode, capabable to connect host using LE or BREDR
+# At least one of LE or BREDR flag should be set.
+
+# To enable LE capability
+LE_DEFAULT=1
+
+# To enable BR/EDR capability
+BREDR_DEFAULT=1
+
+##########
+# To enable HCI_UART for ClientControl
+TESTING_USING_HCI_DEFAULT=1
+
+##########
+# Enable OTA capability
+# Use OTA_FW_UPGRADE=1 to enable Over-the-air firmware upgrade functionality
+# Use OTA_SEC_FW_UPGRADE=1 in the make target to use secure OTA procedure.
+# OTA_SEC_FW_UPGRADE_DEFAULT flag takes effect only if OTA_FW_UPGRADE_DEFAULT=1
+OTA_FW_UPGRADE_DEFAULT=0
+ OTA_SEC_FW_UPGRADE_DEFAULT=0
+
+##########
 # SLEEP_ALLOWED
 #  SLEEP_ALLOWED_DEFAULT=0  Disable sleep function
 #  SLEEP_ALLOWED_DEFAULT=1  Allow sleep without shutdown
 #  SLEEP_ALLOWED_DEFAULT=2  Allow sleep with ePDS
 #  SLEEP_ALLOWED_DEFAULT=3  Allow sleep with HIDOFF
 SLEEP_ALLOWED_DEFAULT=2
+
+##########
 # LED
 #  LED_SUPPORT_DEFAULT=0  Disable LED functions (Good for power consumption measurement)
 #  LED_SUPPORT_DEFAULT=1  Use LED for status indication
 LED_SUPPORT_DEFAULT=1
 
+##########
+# Use AUTO_RECONNECT=1 to automatically reconnect when connection drops
+AUTO_RECONNECT_DEFAULT=0
+
+##########
+# LE link control flags. Those flags takes effect only if LE capability is turned on
+#
+# Use ASSYMETRIC_SLAVE_LATENCY=1 if master won't accept slave connection parameter update request
+ ASSYMETRIC_SLAVE_LATENCY_DEFAULT=0
+#
+# Use LE_LOCAL_PRIVACY=1 to advertise with Resolvable Private Address (RPA)
+ LE_LOCAL_PRIVACY_DEFAULT=0
+#
+# Use SKIP_PARAM_UPDATE=1 to not request connection parameter update immediately when
+# received LE conn param update complete event with non-preferred values
+ SKIP_PARAM_UPDATE_DEFAULT=1
+#
+# DISCONNECTED_ENDLESS_ADV=1 to do endless advertisement without expiration period.
+ DISCONNECTED_ENDLESS_ADV_DEFAULT=0
+##########
+
+
 XIP?=xip
 BT_DEVICE_ADDRESS?=default
 UART?=AUTO
-TESTING_USING_HCI ?= $(TESTING_USING_HCI_DEFAULT)
-OTA_FW_UPGRADE ?= $(OTA_FW_UPGRADE_DEFAULT)
-OTA_SEC_FW_UPGRADE ?= $(OTA_SEC_FW_UPGRADE_DEFAULT)
-ASSYMETRIC_SLAVE_LATENCY ?= $(ASSYMETRIC_SLAVE_LATENCY_DEFAULT)
-LE_LOCAL_PRIVACY ?= $(LE_LOCAL_PRIVACY_DEFAULT)
-SKIP_PARAM_UPDATE ?= $(SKIP_PARAM_UPDATE_DEFAULT)
-AUTO_RECONNECT ?= $(AUTO_RECONNECT_DEFAULT)
-SLEEP_ALLOWED ?= $(SLEEP_ALLOWED_DEFAULT)
-LED ?= $(LED_SUPPORT_DEFAULT)
+TESTING_USING_HCI?=$(TESTING_USING_HCI_DEFAULT)
+OTA_FW_UPGRADE?=$(OTA_FW_UPGRADE_DEFAULT)
+OTA_SEC_FW_UPGRADE?=$(OTA_SEC_FW_UPGRADE_DEFAULT)
+ASSYMETRIC_SLAVE_LATENCY?=$(ASSYMETRIC_SLAVE_LATENCY_DEFAULT)
+LE_LOCAL_PRIVACY?=$(LE_LOCAL_PRIVACY_DEFAULT)
+SKIP_PARAM_UPDATE?=$(SKIP_PARAM_UPDATE_DEFAULT)
+AUTO_RECONNECT?=$(AUTO_RECONNECT_DEFAULT)
+SLEEP_ALLOWED?=$(SLEEP_ALLOWED_DEFAULT)
+DISCONNECTED_ENDLESS_ADV?=$(DISCONNECTED_ENDLESS_ADV_DEFAULT)
+LED?=$(LED_SUPPORT_DEFAULT)
+LE?=$(LE_DEFAULT)
+BREDR?=$(BREDR_DEFAULT)
+
+ifeq ($(TARGET), CYW920735Q60EVB-01)
+ ifeq ($(BREDR), 1)
+#  $(error TARGET $(TARGET) does not support BR/EDR)
+  $(warning *********************************************************************)
+  $(warning TARGET $(TARGET) does not support BR/EDR BREDR=0 is enforced)
+  $(warning *********************************************************************)
+  BREDR=0
+  LE=1
+ endif
+endif
 
 #
 # App defines
 #
 CY_APP_DEFINES = \
   -DWICED_BT_TRACE_ENABLE \
-  -DBLE_SUPPORT \
-  -DBR_EDR_SUPPORT \
+  -DSUPPORT_KEYSCAN \
+  -DBATTERY_REPORT_SUPPORT \
+  -DSUPPORT_KEY_REPORT \
   -DSLEEP_ALLOWED=$(SLEEP_ALLOWED) \
   -DLED_SUPPORT=$(LED)
 
-ifneq ($(filter CYW920819EVB-02 CYW920820EVB-02 CYW920819REF-KB-01,$(TARGET)),)
- CY_APP_DEFINES += -DSUPPORT_EPDS
-endif
+# SUPPORT_CODE_ENTRY requires SUPPORT_KEYSCAN to be enabled
+#CY_APP_DEFINES += -DSUPPORT_CODE_ENTRY
 
 ifeq ($(TARGET), CYW920819REF-KB-01)
  CY_APP_DEFINES += -DKEYBOARD_PLATFORM
@@ -197,16 +246,33 @@ else
  endif # OTA_SEC_FW_UPGRADE
 endif # OTA_FW_UPGRADE
 
-ifeq ($(ASSYMETRIC_SLAVE_LATENCY),1)
- CY_APP_DEFINES += -DASSYM_SLAVE_LATENCY
+ifeq ($(LE),1)
+ CY_APP_DEFINES += -DBLE_SUPPORT
+
+ ifeq ($(ASSYMETRIC_SLAVE_LATENCY),1)
+  CY_APP_DEFINES += -DASSYM_SLAVE_LATENCY
+ endif
+
+ ifeq ($(SKIP_PARAM_UPDATE),1)
+  CY_APP_DEFINES += -DSKIP_CONNECT_PARAM_UPDATE_EVEN_IF_NO_PREFERED
+ endif
+
+ ifeq ($(DISCONNECTED_ENDLESS_ADV),1)
+  CY_APP_DEFINES += -DENDLESS_LE_ADVERTISING_WHILE_DISCONNECTED
+ endif
+
+ ifeq ($(LE_LOCAL_PRIVACY),1)
+  CY_APP_DEFINES += -DLE_LOCAL_PRIVACY_SUPPORT
+ endif
+
+else
+ ifeq ($(BREDR),0)
+  $(error Either LE or BREDR must be enabled)
+ endif
 endif
 
-ifeq ($(LE_LOCAL_PRIVACY),1)
- CY_APP_DEFINES += -DLE_LOCAL_PRIVACY_SUPPORT
-endif
-
-ifeq ($(SKIP_PARAM_UPDATE),1)
- CY_APP_DEFINES += -DSKIP_CONNECT_PARAM_UPDATE_EVEN_IF_NO_PREFERED
+ifeq ($(BREDR),1)
+ CY_APP_DEFINES += -DBR_EDR_SUPPORT
 endif
 
 ifeq ($(AUTO_RECONNECT),1)
@@ -222,6 +288,7 @@ CY_APP_PATH=.
 
 # Path (absolute or relative) to the bt-sdk folder (at repo root)
 CY_SHARED_PATH=$(CY_APP_PATH)/../../../wiced_btsdk
+
 # absolute path to the root of the BTSDK
 CY_SHARED_PATH_ABS=$(CURDIR)/../../../wiced_btsdk
 
@@ -283,7 +350,6 @@ MAKE_OVERRIDES=OTA_FW_UPGRADE=$(OTA_FW_UPGRADE)
 export CONFIG
 export COMPONENTS
 export DISABLE_COMPONENTS
--include internal.mk
 CY_SHARED_LIB_ARGS:=$(MAKECMDGOALS) $(MAKE_OVERRIDES) CY_APP_DEFINES+="$(CY_APP_DEFINES)" CY_TARGET_DEVICE=$(CY_TARGET_DEVICE) TARGET=$(TARGET)
 
 .PHONY: $(SEARCH_LIBS_AND_INCLUDES) shared_libs
@@ -296,6 +362,7 @@ $(SEARCH_LIBS_AND_INCLUDES):
 CY_APP_LOCATION=$(lastword $(MAKEFILE_LIST))
 
 CY_APP_BUILD_GOALS:=build qbuild clean program qprogram debug qdebug all
+-include internal.mk
 ifeq ($(filter setup teardown,$(MAKECMDGOALS)),)
 
 # ensure pre-requisite wiced_btsdk project is present

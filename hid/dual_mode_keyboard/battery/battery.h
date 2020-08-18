@@ -30,15 +30,48 @@
  * of such system or application assumes all risk of such use and in doing
  * so agrees to indemnify Cypress against all liability.
  */
-// !!! this file should be replaced...
-#ifdef OTA_SECURE_FIRMWARE_UPGRADE
-#include <bt_types.h>
-#include <p_256_ecc_pp.h>
 
-// public key
-Point ecdsa256_public_key =
+/** @file
+ *
+ * This file defines the interface of battery report service
+ *
+ */
+
+#ifndef __APP_BATTERY_H__
+#define __APP_BATTERY_H__
+
+#ifdef BATTERY_REPORT_SUPPORT
+#include "wiced.h"
+#include "wiced_hal_batmon.h"
+
+#define BATTERY_RPT_SIZE 1
+
+/// Battery key report structure
+typedef PACKED struct
 {
-    { 0xb34eacf0, 0x3ec9a058, 0x9de3c962, 0x6f21ae8a, 0x0d0b3967, 0x30e901b3, 0x1b2b1931, 0x6b462309, },
-    { 0x21ec2ce7, 0x3f5dbaad, 0x887b63a3, 0xed6cb229, 0x049d0642, 0xd2358dab, 0x69a2b20b, 0xc71e1d03, },
-};
-#endif // OTA_SECURE_FIRMWARE_UPGRADE
+    /// Set to the value specified in the config record.
+    uint8_t    reportID;
+
+    uint8_t    level[BATTERY_RPT_SIZE];
+}BatteryReport;
+
+extern BatteryReport batRpt;
+
+/********************************************************************************
+ * Function Name: void bat_init
+ ********************************************************************************
+ * Summary: initialize battery report
+ *
+ * Parameters:
+ *  void (shutdown_cb)()  -- shutdown callback function
+ *
+ * Return:
+ *  none
+ *
+ *******************************************************************************/
+void bat_init(void (shutdown_cb)());
+
+#else
+# define bat_init(c)
+#endif
+#endif // __APP_BATTERY_H__

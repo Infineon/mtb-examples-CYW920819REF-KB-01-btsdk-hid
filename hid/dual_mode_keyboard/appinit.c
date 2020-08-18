@@ -33,73 +33,32 @@
 
 /** @file
  *
- * Entry point to Bluetooth (BT) classic keyboard application.
+ * Entry point to application.
  *
  */
+#include "app.h"
+#include "cycfg_pins.h"
 
-#include "keyboard.h"
-#include "wiced_hal_mia.h"
-#include "wiced_hal_wdog.h"
-#include "wiced_bt_trace.h"
-#include "hidd_lib.h"
-
-#ifdef TESTING_USING_HCI
-static hci_rpt_db_t hci_rpt_db[] =
+/*****************************************************************************
+ * wiced_bt_stack buffer pool configuration
+ *
+ * Configure buffer pools used by the stack
+ *
+ * Pools must be ordered in increasing buf_size.
+ * If a pool runs out of buffers, the next  pool will be used
+ *****************************************************************************/
+const wiced_bt_cfg_buf_pool_t wiced_bt_hid_cfg_buf_pools[] =
 {
-   // rpt_buf,             rpt_type,                    rpt_id,              length (exclude rpt_id)
-   {blekb_key_std_rpt,     WICED_HID_REPORT_TYPE_INPUT, STD_KB_REPORT_ID,    KEYRPT_MAX_KEYS_IN_STD_REPORT+2},
-   {blekb_bitmap_rpt,      WICED_HID_REPORT_TYPE_INPUT, BITMAPPED_REPORT_ID, KEYRPT_NUM_BYTES_IN_BIT_MAPPED_REPORT},
-   {&blekb_func_lock_rpt,  WICED_HID_REPORT_TYPE_INPUT, FUNC_LOCK_REPORT_ID, 1},
+/*  { buf_size, buf_count } */
+    { 64,       20        }, /* Small Buffer Pool */
+    { 100,      30        }, /* Medium Buffer Pool (used for HCI & RFCOMM control messages, min recommended size is 360) */
+    { 330,      8         }, /* Large Buffer Pool  (used for HCI ACL messages) */
+    { 1024,     2         }, /* Extra Large Buffer Pool - Used for avdt media packets and miscellaneous (if not needed, set buf_count to 0) */
 };
-#define HCI_CONTROL_RPT_CNT (sizeof(hci_rpt_db)/sizeof(hci_rpt_db_t))
-#endif
 
 /******************************************************************************
  *                          Function Definitions
 ******************************************************************************/
-
-wiced_result_t hid_app_init(void)
-{
-    wiced_result_t result;
-
-    /*  LE GATT DB Initialization  */
-    if ( (result=wiced_hidd_gatts_init( blehid_db_data, blehid_db_size, blehid_gattAttributes, blehid_gattAttributes_size, NULL, NULL )) != WICED_BT_SUCCESS )
-    {
-        WICED_BT_TRACE("\nwiced_hidd_gatts_init failed, result=%d",result);
-        wiced_hidd_led_blink_error(KB_LED_BLUE, LED_ERROR_CODE_GATTS);
-        return WICED_BT_ERROR;
-    }
-
-    /* BR/EDR SDP database init, wiced_bt_sdp_db_init always return TRUE */
-    wiced_bt_sdp_db_init(( uint8_t* )wiced_bt_sdp_db, wiced_bt_sdp_db_size);
-
-    /* general hid app init */
-    /* BT_DEVICE_TYPE_BREDR_BLE does not work */
-    wiced_hidd_app_init(BT_DEVICE_TYPE_BREDR_BLE);
-
-    /* Allow peer to pair */
-    wiced_bt_set_pairable_mode(WICED_TRUE, 0);
-
-    /* BT HID power management configuration  */
-//    wiced_bt_hidd_configure_power_management_params(bthid_powerStateList, bthid_powerStateList_num,
-//                                               bthid_SSRPowerStatesList, bthid_SSRPowerStatesList_num);
-
-    /* start keyboard  */
-    dual_mode_kb_create();
-    return WICED_BT_SUCCESS;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void app_LED_init(void)
-{
-    kb_LED_init(KB_LED_CAPS, LED_OFF_LEVEL);
-    kb_LED_init(KB_LED_BLUE, LED_OFF_LEVEL);
-#ifdef KEYBOARD_PLATFORM
-    kb_LED_init(KB_LED_GREEN, LED_OFF_LEVEL);
-    kb_LED_init(KB_LED_RED, LED_OFF_LEVEL);
-#endif
-}
 
 /*
  *  Entry point to the application. Set device configuration and start BT
@@ -108,17 +67,16 @@ void app_LED_init(void)
  */
 void application_start( void )
 {
-    //restore content from AON memory when wake up from shutdown sleep (SDS)
-    kbapp_aon_restore();
+    // Initialize LED/UART for debug
+    wiced_set_debug_uart(WICED_ROUTE_DEBUG_TO_PUART);
+    hidd_led_init(led_count, platform_led);
 
-    // initialize LED early so it can display error code
-    app_LED_init();
+    hidd_start(app_start, NULL, &bt_cfg, wiced_bt_hid_cfg_buf_pools);
 
-    wiced_hidd_start(hid_app_init, NULL, &wiced_bt_hid_cfg_settings, wiced_bt_hid_cfg_buf_pools);
-    hci_control_init(HCI_CONTROL_RPT_CNT, hci_rpt_db);
+    WICED_BT_TRACE("\nDEV=%d Version:%d.%d Rev=%d Build=%d",hidd_chip_id(), WICED_SDK_MAJOR_VER, WICED_SDK_MINOR_VER, WICED_SDK_REV_NUMBER, WICED_SDK_BUILD_NUMBER);
 
 #if (SLEEP_ALLOWED == 3)
-    wiced_hidd_allowed_hidoff(TRUE);
+    hidd_allowed_hidoff(TRUE);
 #endif
 
     WICED_BT_TRACE("\nSLEEP_ALLOWED=%d",SLEEP_ALLOWED);
@@ -135,10 +93,6 @@ void application_start( void )
     WICED_BT_TRACE("\nASSYMETRIC_SLAVE_LATENCY");
 #endif
 
-#ifdef LE_LOCAL_PRIVACY_SUPPORT
-    WICED_BT_TRACE("\nLE_LOCAL_PRIVACY");
-#endif
-
 #ifdef SKIP_CONNECT_PARAM_UPDATE_EVEN_IF_NO_PREFERED
     WICED_BT_TRACE("\nSKIP_PARAM_UPDATE");
 #endif
@@ -147,8 +101,11 @@ void application_start( void )
     WICED_BT_TRACE("\nAUTO_RECONNECT");
 #endif
 
-    if (wiced_hal_mia_is_reset_reason_por())
-    {
-        wiced_hidd_led_blink(KB_LED_BLUE, 5, 100);  // fast 5 blinks to indicate firmware is up and running
-    }
+#ifdef ENDLESS_LE_ADVERTISING_WHILE_DISCONNECTED
+    WICED_BT_TRACE("\nDISCONNECTED_ENDLESS_ADV");
+#endif
+
+#ifdef LE_LOCAL_PRIVACY_SUPPORT
+    WICED_BT_TRACE("\nLE_LOCAL_PRIVACY_SUPPORT");
+#endif
 }
